@@ -12,3 +12,15 @@ def index(request):
             'posts': posts,
         }
     )
+
+def single_post_page(request, pk):  # blog/urls.py에서 불러올 함수
+    post = Post.objects.get(pk=pk)  # pk는 primary key의 약자로
+    # 해당 함수의 매개변수로 지정하여 Post 모델의 pk 필드 값이 매개변수로 받은 pk와 같은 레코드를 가져오라는 의미
+    
+    return render(
+        request,
+        'blog/single_post_page.html',
+        {
+            'post' : post,
+        }
+    )
