@@ -3,6 +3,7 @@ import os # get_file_name() 함수를 위한 os 모듈 불러오기
 
 class Post(models.Model):
     title = models.CharField(max_length=30)
+    hook_text = models.CharField(max_length=100, blank=True)
     content = models.TextField()
 
     head_image = models.ImageField(upload_to='blog/images/%Y/%m/%d/', blank=True)   # blank=True는 해당 필드는 필수항목은 아니라는 뜻
