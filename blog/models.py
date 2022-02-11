@@ -1,4 +1,5 @@
 from django.db import models
+import os # get_file_name() 함수를 위한 os 모듈 불러오기
 
 class Post(models.Model):
     title = models.CharField(max_length=30)
@@ -16,4 +17,10 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return f'/blog/{self.pk}/'
+
+    def get_file_name(self):
+        return os.path.basename(self.file_upload.name)
+
+    def get_file_ext(self):
+        return self.get_file_name().split('.')[-1]
     # 모델의 레코드별 URL 생성 규칙을 정의하는 함수: URL은 도매인 뒤에 /blog/레코드의 pk/
