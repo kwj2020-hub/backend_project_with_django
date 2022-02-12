@@ -23,7 +23,7 @@ class TestView(TestCase):
         # 2.1 메인 영역에 게시물을 하나도 없다면
         self.assertEqual(Post.objects.count(), 0)
         # 2.2 '아직 게시물이 없습니다'라는 문구가 보인다.
-        main_area = soup.find('div', id='main_area')
+        main_area = soup.find('div', id='main-area')
         self.assertIn('아직 게시물이 없습니다', main_area.text)
 
         # 3.1 포스트가 2개 있다면
@@ -42,7 +42,7 @@ class TestView(TestCase):
         soup = BeautifulSoup(response.content, 'html.parser')
         self.assertEqual(response.status_code, 200)
         # 3.3 메인 영역에 포스트 2개의 타이틀이 존재한다.
-        main_area = soup.find('div', id='main_area')
+        main_area = soup.find('div', id='main-area')
         self.assertIn(post_001.title, main_area.text)
         self.assertIn(post_002.title, main_area.text)
         # 3.4 '아직 게시물이 없습니다'라는 문구는 더 이상 보이지 않는다.
@@ -67,12 +67,13 @@ class TestView(TestCase):
         navbar = soup.nav
         self.assertIn('Blog', navbar.text)
         self.assertIn('About Me', navbar.text)
+
         # 2.3 첫 번째 포스트의 제목이 웹 브라우저 탭 타이틀에 들어 있다.
         self.assertIn(post_001.title, soup.title.text)
 
         # 2.4 첫 번째 포스트의 제목이 포스트 영역에 있다.
-        main_area = soup.find('div', id='main_area')
-        post_area = main_area('div', id='main_area')
+        main_area = soup.find('div', id='main-area')
+        post_area = main_area.find('div', id='main-area')
         self.assertIn(post_001.title, post_area.text)
 
         # 2.5 첫 번째 포스트의 작성자(author)가 포스트 영역에 있다(아직 구현할 수 없음).
