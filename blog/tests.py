@@ -23,7 +23,7 @@ class TestView(TestCase):
         self.assertEqual(blog_btn.attrs['href'], '/blog/')
 
         about_me_btn = navbar.find('a', text='About Me')
-        self.assertEqual(about_me_btn.attrs['href'], '/about_me')
+        self.assertEqual(about_me_btn.attrs['href'], '/about_me/')
 
     def test_post_list(self):
         # 1.1 포스트 목록 페이지를 가져온다.
@@ -85,7 +85,7 @@ class TestView(TestCase):
 
         # 2.4 첫 번째 포스트의 제목이 포스트 영역에 있다.
         main_area = soup.find('div', id='main-area')
-        post_area = main_area.find('div', id='main-area')
+        post_area = main_area.find('div', id='post-area')
         self.assertIn(post_001.title, post_area.text)
 
         # 2.5 첫 번째 포스트의 작성자(author)가 포스트 영역에 있다(아직 구현할 수 없음).
