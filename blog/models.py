@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import os # get_file_name() 함수를 위한 os 모듈 불러오기
 
 class Post(models.Model):
@@ -11,7 +12,8 @@ class Post(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # author : 추후 작성 예정
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'[{self.pk}]{self.title}'
