@@ -1,11 +1,16 @@
 # from django.shortcuts import render
 from django.views.generic import ListView, DetailView   # ListView와 DetailView 클래스를 임포트하여 CBV 사용 준비 완료!
-from .models import Post
+from .models import Post, Category
 
-class PostList(ListView):   # index() 함수를 대체
+class PostList(ListView):
     model = Post
     ordering = '-pk'
-    # template_name = 'blog/post_list.html'   # template_name의 URL을 수동으로 지정
+
+    def get_context_data(self, **kwargs):
+        context = super(PostList, self).get_context_data()
+        context['categories'] = Category.objects.all()
+        context['no_category_post_count'] = Post.objects.filter(category=None).count()
+        return context
 
 class PostDetail(DetailView):
     model = Post

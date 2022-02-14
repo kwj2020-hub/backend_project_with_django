@@ -6,7 +6,7 @@
 
                     {% for p in post_list %}
                     <!-- Blog Post -->
-                    <div class="card mb-4">
+                    <div class="card mb-4" id="post-{{ p.pk }}">
                         {% if p.head_image %}
                             <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }}}">
                         {% else %}
@@ -15,6 +15,11 @@
                         <!-- if문을 사용해 포스트에 업로드된 이미지가 있다면 보여주고 없다면 https://picsum.photo/에서 지정된 크기의 랜덤 이미지를 추출하여 전송 -->
 
                         <div class="card-body">
+                            {% if p.category %}
+                                <span class="badge badge-secondary float_right">{{ p.category }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary float_right">미분류</span>
+                            {% endif %}
                             <h2 class="card-title">{{ p.title }}</h2>
                             {% if p.hook_text %}
                                 <h5 class="text-muted">{{ p.hook_text }}</h5>
