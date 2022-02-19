@@ -123,3 +123,18 @@ class TestView(TestCase):
 
         # 2.6 첫 번째 포스트의 내용(content)이 포스트 영역에 있다.
         self.assertIn(self.post_001.content, post_area.text)
+
+    # 카테고리 페이지에 구성하고 싶은 요소를 테스트할 함수
+    def test_category_page(self):
+        response = self.client.get(self.category_programming.get_absolute_url())    # 카테고리 페이지도 고유 URL을 갖도록 get_absolute_url() 함수를 사용
+        self.assertEqual(response.status_code, 200)   # 페이지가 잘 열리는지 검사하기 위해 status_code가 200인지 검사
+
+        soup = BeautifulSoup(response.content, 'html.parser')   # bs4로 html 파일을 파싱하기
+        self.navbar_test(soup)  # 네비개이션 바 구성 확인
+        self.category_card_test(soup)   # 카테고리 카드 구성 확인
+
+        main_area = soup.find('div', id='main-area') # 파싱된 html 문서 내에서 div#main-area 태그 요소 찾기
+        self.assertIn(self.category_programming.name, main_area.text)   # 위에서 선택한 카테고리 이름인 programming이 있는지 확인
+        self.assertIn(self.post_001.title, main_area.text)  # programming 카테고리에 해당하는 포스트만 노출되어 있는지 확인
+        self.assertNotIn(self.post_002.title, main_area.text)   # 그렇지 않은 post_002, post_003의 타이틀은 메인 영역에 존재해서는 안됨
+        self.assertNotIn(self.post_003.title, main_area.text)
