@@ -1,6 +1,6 @@
 from django.shortcuts import render     # render를 임포트해야 FBV 사용 가능
 from django.views.generic import ListView, DetailView   # ListView와 DetailView 클래스를 임포트하여 CBV 사용 준비 완료!
-from .models import Post, Category
+from .models import Post, Category, Tag
 
 class PostList(ListView):
     model = Post
@@ -37,6 +37,21 @@ def category_page(request, slug):
             'categories' : Category.objects.all(),  # 페이지의 오른쪽에 위치한 카테고리 카드를 정의
             'no_category_post_count' : Post.objects.filter(category=None).count(),  # 카테고리 가트 맨 아래에 미분류 포스트와 그 개수를 알려주기
             'category' : category,  # 페이지 타이틀 옆에 카테고리 이름을 알려주기
+        }
+    )
+
+def tag_page(request, slug):
+    tag = Tag.objects.get(slug=slug)
+    post_list = tag.post_set.all()
+
+    return render(
+        request,
+        'blog/post_list.html',
+        {
+            'post_list': post_list,
+            'tag': tag,
+            'categories': Category.objects.all(),
+            'no_category_post_count' : Post.objects.filter(category=None).count(),
         }
     )
 

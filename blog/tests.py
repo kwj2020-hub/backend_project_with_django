@@ -84,6 +84,7 @@ class TestView(TestCase):
         post_001_card = main_area.find('div', id='post-1')
         self.assertIn(self.post_001.title, post_001_card.text)
         self.assertIn(self.post_001.category.name, post_001_card.text)
+        self.assertIn(self.post_001.author.username.upper(), post_001_card.text)
         self.assertIn(self.tag_hello.name, post_001_card.text)
         self.assertNotIn(self.tag_python.name, post_001_card.text)
         self.assertNotIn(self.tag_python_kr.name, post_001_card.text)
@@ -91,6 +92,7 @@ class TestView(TestCase):
         post_002_card = main_area.find('div', id='post-2')
         self.assertIn(self.post_002.title, post_002_card.text)
         self.assertIn(self.post_002.category.name, post_002_card.text)
+        self.assertIn(self.post_002.author.username.upper(), post_002_card.text)
         self.assertNotIn(self.tag_hello.name, post_002_card.text)
         self.assertNotIn(self.tag_python.name, post_002_card.text)
         self.assertNotIn(self.tag_python_kr.name, post_002_card.text)
@@ -98,6 +100,7 @@ class TestView(TestCase):
         post_003_card = main_area.find('div', id='post-3')
         self.assertIn('미분류', post_003_card.text)
         self.assertIn(self.post_003.title, post_003_card.text)
+        self.assertIn(self.post_003.author.username.upper(), post_003_card.text)
         self.assertNotIn(self.tag_hello.name, post_003_card.text)
         self.assertIn(self.tag_python.name, post_003_card.text)
         self.assertIn(self.tag_python_kr.name, post_003_card.text)
@@ -145,8 +148,23 @@ class TestView(TestCase):
         # 2.6 첫 번째 포스트의 내용(content)이 포스트 영역에 있다.
         self.assertIn(self.post_001.content, post_area.text)
 
-    # 카테고리 페이지에 구성하고 싶은 요소를 테스트할 함수
-    def test_category_page(self):
+    def test_tag_page(self):
+        response = self.client.get(self.tag_hello.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.navbar_test(soup)
+        self.category_card_test(soup)
+
+        self.assertIn(self.tag_hello.name, soup.h1.text)
+
+        main_area = soup.find('div', id='main-area')
+        self.assertIn(self.tag_hello.name, main_area.text)
+        self.assertIn(self.post_001.title, main_area.text)
+        self.assertNotIn(self.post_002.title, main_area.text)
+        self.assertNotIn(self.post_003.title, main_area.text)
+
+    def test_category_page(self): # 카테고리 페이지에 구성하고 싶은 요소를 테스트할 함수
         response = self.client.get(self.category_programming.get_absolute_url())    # 카테고리 페이지도 고유 URL을 갖도록 get_absolute_url() 함수를 사용
         self.assertEqual(response.status_code, 200)   # 페이지가 잘 열리는지 검사하기 위해 status_code가 200인지 검사
 
@@ -159,3 +177,4 @@ class TestView(TestCase):
         self.assertIn(self.post_001.title, main_area.text)  # programming 카테고리에 해당하는 포스트만 노출되어 있는지 확인
         self.assertNotIn(self.post_002.title, main_area.text)   # 그렇지 않은 post_002, post_003의 타이틀은 메인 영역에 존재해서는 안됨
         self.assertNotIn(self.post_003.title, main_area.text)
+
