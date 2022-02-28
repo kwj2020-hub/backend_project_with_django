@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('create_post/', views.PostCreate.as_view()),
     path('tag/<str:slug>/', views.tag_page),
     path('category/<str:slug>/', views.category_page), # category/ 뒤에 문자열이 붙는 URL을 입력하면 그 문자열은 views.py에 정의할 category_page() 함수의 매개변수인 slug의 인자로 넘겨주도록 설정
     path('<int:pk>/', views.PostDetail.as_view()),

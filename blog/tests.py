@@ -178,3 +178,30 @@ class TestView(TestCase):
         self.assertNotIn(self.post_002.title, main_area.text)   # 그렇지 않은 post_002, post_003의 타이틀은 메인 영역에 존재해서는 안됨
         self.assertNotIn(self.post_003.title, main_area.text)
 
+    def test_create_post(self):  # 포스트 작성 페이지 실행 코드
+        # 로그인하지 않으면 status code가 200이면 안된다!
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+
+        # 로그인을 한다.
+        self.client.login(username='trump', password='somepassword')
+
+        response = self.client.get('/blog/create_post/')
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.assertEqual('Create Post - Blog', soup.title.text)
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('Create New Post', main_area.text)
+
+        self.client.post(   # 첫 번째 인수인 해당 경로로 두 번째 인수인 딕셔너리 정보를 POST 방식으로 보냄
+            '/blog/create_post/',
+            {
+                'title': 'Post Form 만들기',
+                'content': 'Post Form 페이지를 만듭시다.',
+            }
+        )
+        self.assertEqual(Post.objects.count(), 4)
+        last_post = Post.objects.last()     # Post 레코드 중 맨 마지막 레코드를 가져와 저장
+        self.assertEqual(last_post.title, "Post Form 만들기")
+        self.assertEqual(last_post.author.username, 'trump')
