@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect     # render를 임포트해야 FBV 사용 가능
 from django.views.generic import ListView, DetailView, CreateView   # ListView와 DetailView 클래스를 임포트하여 CBV 사용 준비 완료!
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Category, Tag
 
 class PostList(ListView):
@@ -22,13 +22,16 @@ class PostDetail(DetailView):
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
         return context
 
-class PostCreate(LoginRequiredMixin, CreateView):   # 장고가 제공하는 CreateView를 상속받는 PostCreate 클래스...인데, LoginRequiredMixin 클래스를 또 상속받을 수 있는 이유는 Mixin이라는 개념을 사용했기 때문.
+class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):   # 장고가 제공하는 CreateView를 상속받는 PostCreate 클래스...인데, LoginRequiredMixin 클래스를 또 상속받을 수 있는 이유는 Mixin이라는 개념을 사용했기 때문.
     model = Post
     fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category'] # Post 모델에 사용할 필드명을 리스트로 작성
 
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.is_staff
+
     def form_valid(self, form):
         current_user = self.request.user    # 웹 사이트의 방문자를 의미
-        if current_user.is_authenticated:   # 웹 사이트의 방문자가 로그인한 상태인지 아닌지를 확인(is_authenticated)
+        if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser):   # 웹 사이트의 방문자가 (슈퍼유저 또는 스태프로) 로그인한 상태인지 아닌지를 확인(is_authenticated)
             form.instance.author = current_user # form에서 생성한 instance의 author 필드에 current_userfmf ekadma
             return super(PostCreate, self).form_valid(form) # CreateView의 form_valid() 함수에 현재 form을 인자로 보내 처리
         else:
