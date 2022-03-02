@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect     # render를 임포트해야 FBV 사용 가능
-from django.views.generic import ListView, DetailView, CreateView   # ListView와 DetailView 클래스를 임포트하여 CBV 사용 준비 완료!
+from django.views.generic import ListView, DetailView, CreateView, UpdateView   # ListView와 DetailView 클래스를 임포트해야 CBV 사용 준비 완료!
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Category, Tag
+from django.core.exceptions import PermissionDenied
 
 class PostList(ListView):
     model = Post
@@ -36,6 +37,18 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):   # 장�
             return super(PostCreate, self).form_valid(form) # CreateView의 form_valid() 함수에 현재 form을 인자로 보내 처리
         else:
             return redirect('/blog/') # redirect 함수를 통해 블로그로 돌아감
+
+class PostUpdate(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category', 'tags']
+
+    template_name = 'blog/post_update_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user == self.get_object().author:
+            return super(PostUpdate, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
 def category_page(request, slug):
     if slug == 'no_category':
