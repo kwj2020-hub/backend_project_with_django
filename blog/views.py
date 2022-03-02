@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView   
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Category, Tag
 from django.core.exceptions import PermissionDenied
+from django.utils.text import slugify
 
 class PostList(ListView):
     model = Post
@@ -33,8 +34,26 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):   # 장�
     def form_valid(self, form):
         current_user = self.request.user    # 웹 사이트의 방문자를 의미
         if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser):   # 웹 사이트의 방문자가 (슈퍼유저 또는 스태프로) 로그인한 상태인지 아닌지를 확인(is_authenticated)
-            form.instance.author = current_user # form에서 생성한 instance의 author 필드에 current_userfmf ekadma
-            return super(PostCreate, self).form_valid(form) # CreateView의 form_valid() 함수에 현재 form을 인자로 보내 처리
+            form.instance.author = current_user # form에서 생성한 instance의 author 필드에 current_user를 담음
+            response = super(PostCreate, self).form_valid(form)
+
+            tags_str = self.request.POST.get('tags_str')
+            if tags_str:
+                tags_str = tags_str.strip()
+
+                tags_str = tags_str.replace(',', ';')
+                tags_list = tags_str.split(';')
+
+                for t in tags_list:
+                    t = t.strip()
+                    tag, is_tag_created = Tag.objects.get_or_create(name=t)
+                    if is_tag_created:
+                        tag.slug = slugify(t, allow_unicode=True)
+                        tag.save()
+                    self.object.tags.add(tag)
+
+            return response
+
         else:
             return redirect('/blog/') # redirect 함수를 통해 블로그로 돌아감
 
