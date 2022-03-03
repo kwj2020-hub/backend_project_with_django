@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'blog',
     'single_pages',
     'django_extensions',
@@ -123,6 +124,7 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'   # 이미지 파일들의 URL 지정
 MEDIA_ROOT = os.path.join(BASE_DIR, '_media')   # os모듈로 이미지 파일이 위치할 디렉터리 이름 지정
+CRISPY_TEMPLATE_PACK = 'bootstrap4' # crispy_form의 스타일을 bootstrap4로 지정
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
