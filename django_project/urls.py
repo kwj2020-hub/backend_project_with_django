@@ -22,6 +22,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')),    # 블로그 URL 지정
     path('admin/', admin.site.urls),    # 어드민 URL 지정
     path('markdownx/', include('markdownx.urls')),  # markdownx 사용을 위한 URL 지정
+    path('accounts/', include('allauth.urls')), # allauth 사용을 위한 URL 지정
     path('', include('single_pages.urls')),   # 대문 페이지 URL 지정
 ]
 
