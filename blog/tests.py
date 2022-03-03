@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup   # 반드시 BeautifulSoup 모듈을 미리 설치한 후 임포트할 것!
 from django.contrib.auth.models import User
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Comment
 
 class TestView(TestCase):
     def setUp(self):
@@ -40,6 +40,12 @@ class TestView(TestCase):
         )
         self.post_003.tags.add(self.tag_python_kr)
         self.post_003.tags.add(self.tag_python)
+
+        self.comment_001 = Comment.objects.create(
+            post=self.post_001,
+            author=self.user_obama,
+            content='첫 번째 댓글입니다.'
+        )
 
     def navbar_test(self, soup):
         # 1.1 내비게이션 바가 있다.
@@ -149,6 +155,12 @@ class TestView(TestCase):
 
         # 2.6 첫 번째 포스트의 내용(content)이 포스트 영역에 있다.
         self.assertIn(self.post_001.content, post_area.text)
+
+        # comment area
+        comments_area = soup.find('div', id='comment-area')
+        comment_001_area = comments_area.find('div', id='comment-1')
+        self.assertIn(self.comment_001.author.username, comment_001_area.text)
+        self.assertIn(self.comment_001.content, comment_001_area.text)
 
     def test_tag_page(self):
         response = self.client.get(self.tag_hello.get_absolute_url())

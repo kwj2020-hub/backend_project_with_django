@@ -60,3 +60,16 @@ class Post(models.Model):
 
     def get_content_markdown(self):
         return markdown(self.content)
+
+class Comment(models.Model):    # 댓글 기능을 위한 모델
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)    # 어떤 포스트에 담을 댓글인지를 저장하는 필드
+    author = models.ForeignKey(User, on_delete=models.CASCADE)  # 작성자를 저장하는 필드
+    content = models.TextField()    # 댓글 내용을 담는 필드
+    created_at = models.DateTimeField(auto_now_add=True)    # 작성일시를 담는 필드
+    modified_at = models.DateTimeField(auto_now=True)   # 수정일시를 담는 필드
+
+    def __str__(self):  # 작성자명과 댓글 내용을 출력하는 함수
+        return f'{self.author}::{self.content}'
+
+    def get_absolute_url(self):
+        return f'{self.post.get_absolute_url()}#comment-{self.pk}'
