@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdown
 import os # get_file_name() 함수를 위한 os 모듈 불러오기
 
 class Tag(models.Model):
@@ -28,7 +30,8 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=30)
     hook_text = models.CharField(max_length=100, blank=True)
-    content = models.TextField()
+    content = MarkdownxField()
+    # 주의사항: django 4.0이 url 함수를 삭제한 탓에 markdownx가 django 4.0을 지원하지 못하는 관계로 django 버전을 3.2로 다운그레이드하여 문제를 해결한 상태
 
     head_image = models.ImageField(upload_to='blog/images/%Y/%m/%d/', blank=True)   # blank=True는 해당 필드는 필수항목은 아니라는 뜻
     file_upload = models.FileField(upload_to='blog/files/%Y/%m/%d/', blank=True)
@@ -54,3 +57,6 @@ class Post(models.Model):
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]
     # 모델의 레코드별 URL 생성 규칙을 정의하는 함수: URL은 도매인 뒤에 /blog/레코드의 pk/
+
+    def get_content_markdown(self):
+        return markdown(self.content)
