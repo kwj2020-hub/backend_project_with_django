@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect     # render를 임포트해야 FBV 사용 가능
 from django.views.generic import ListView, DetailView, CreateView, UpdateView   # ListView와 DetailView 클래스를 임포트해야 CBV 사용 준비 완료!
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404
 from .models import Post, Category, Tag
+from .forms import CommentForm
 from django.core.exceptions import PermissionDenied
 from django.utils.text import slugify
 
@@ -22,6 +24,7 @@ class PostDetail(DetailView):
         context = super(PostDetail, self).get_context_data()
         context['categories'] = Category.objects.all()
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
+        context['comment_form'] = CommentForm
         return context
 
 class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):   # 장고가 제공하는 CreateView를 상속받는 PostCreate 클래스...인데, LoginRequiredMixin 클래스를 또 상속받을 수 있는 이유는 Mixin이라는 개념을 사용했기 때문.
@@ -132,6 +135,23 @@ def tag_page(request, slug):
             'no_category_post_count' : Post.objects.filter(category=None).count(),
         }
     )
+
+def new_comment(request, pk):
+    if request.user.is_authenticated:   # 비정상적인 접근에 대비해 로그인하지 않은 경우에는 PermissionDined를 발생시킴
+        post = get_object_or_404(Post, pk=pk)   # pk를 인자로 받아 댓글을 달 포스트를 날려 쿼리를 가져옮. 해당하는 pk가 없으면 404를 출력하도록 get_object_or_404라는 기능을 활용
+
+        if request.method == 'POST':    # 폼을 작성하고 submit하면 POST 방식으로 전달되지만, 브라우저 URL 입력으로 접근하는 경우 pk에 해당하는 포스트 페이지로 리다이렉트
+            comment_form = CommentForm(request.POST)   # POST 방식으로 들어온 정보를 CommentForm의 형태로 가져옮.
+            if comment_form.is_valid(): # 폼이 유효하게 작성되었다면 해당 내용으로 새로운 레코드를 만들어 데이터베이스에 저장함.
+                comment = comment_form.save(commit=False)   # 바로 저장하는 기능을 잠시 미루고 comment_form에 담김 정보로 Comment 인스턴스만 가져오기
+                comment.post = post     # pk로 가져온 포스트로 채우고
+                comment.author = request.user   # 로그인한 사용자 정보로 채움.
+                comment.save()  # 모든 작업을 끝내고 저장
+                return redirect(comment.get_absolute_url()) # 마지막으로 comment의 URL로 리다이렉트!
+        else:   # 폼을 작성하고 submit하면 POST 방식으로 전달되지만, 브라우저 URL 입력으로 접근하는 경우 pk에 해당하는 포스트 페이지로 리다이렉트
+            return redirect(post.get_absolute_url())
+    else:   # 비정상적인 접근에 대비해 로그인하지 않은 경우에는 PermissionDined를 발생시킴
+        raise PermissionDenied
 
 # 기존 FBV 스타일의 함수는 주석 처리
 # def index(request):

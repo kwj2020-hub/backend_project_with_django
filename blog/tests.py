@@ -286,3 +286,49 @@ class TestView(TestCase):
         self.assertIn('한글 태그', main_area.text)
         self.assertIn('some tag', main_area.text)
         self.assertNotIn('python', main_area.text)
+
+    def test_comment_form(self):
+        self.assertEqual(Comment.objects.count(), 1)    # setUp 함수에 이미 댓글이 하나 있는 상태에서 시작
+        self.assertEqual(self.post_001.comment_set.count(), 1)  # 이 댓글은 self.post_001에 달린 댓글이라 self.post_001의 댓글 개수도 1개
+
+        # 로그인하지 않은 상태
+        response = self.client.get(self.post_001.get_absolute_url())    # 먼저 로그인하지 않은 상태를 테스트
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        comment_area = soup.find('div', id='comment-area')  # id가 comment-area인 div 요소를 찾아 comment-area에 저장
+        self.assertIn('Log in and leave a comment', comment_area.text)  # 로그인하지 않은 상태이므로 'Log in and leave a comment'라는 문구가 보여야 함.
+        self.assertFalse(comment_area.find('form', id='comment-form'))  # 로그인하지 않은 상태이므로 id가 comment-form인 form 요소는 존재하지 않음
+
+        # 로그인한 상태
+        self.client.login(username='obama', password='somepassword')    # 이번에는 로그인한 상태를 테스트
+        response = self.client.get(self.post_001.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        comment_area = soup.find('div', id='comment-area')
+        self.assertNotIn('Log in and leave a comment', comment_area.text)   # 로그인한 상태이므로 'Log in and leave a comment'라는 문구는 보이지 않음.
+
+        comment_form = comment_area.find('form', id='comment-form') # 로그인한 상태라 댓글 폼이 보이고,
+        self.assertTrue(comment_form.find('textarea', id='id_content')) # 그 안에 textarea도 있음.
+        response = self.client.post(    # POST 방식으로 댓글 내용을 서버에 보내고 그 결과를 response에 담음.
+            self.post_001.get_absolute_url() + 'new_comment/',  # post_detail.html을 수정할 때 적용할 URL
+            {
+                'content': "오바마의 댓글입니다.",
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Comment.objects.count(), 2) # 댓글이 원래 하나였다가 response에서 새로 하나 추가되어 2개가 됨.
+        self.assertEqual(self.post_001.comment_set.count(), 2) # self.post_001에서 댓글이 1개였다가 이제 2개가 됨.
+        new_comment = Comment.objects.last()    # 마지막으로 생성된 comment를 가져옮.
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertIn(new_comment.post.title, soup.title.text)  # POST 방식으로 서버에 요청에 comment가 달린 포스트 상세 페이지가 리다이렉트됨.
+
+        comment_area = soup.find('div', id='comment-area')  # 새로 만든 comment의 작성자가 나타남.
+        new_comment_div = comment_area.find('div', id=f'comment-{new_comment.pk}')
+        self.assertIn('obama', new_comment_div.text)
+        self.assertIn('오바마의 댓글입니다.', new_comment_div.text)
