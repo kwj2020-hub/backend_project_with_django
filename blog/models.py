@@ -61,6 +61,12 @@ class Post(models.Model):
     def get_content_markdown(self):
         return markdown(self.content)
 
+    # def get_avatar_url(self):
+    #     if self.author.socialaccount_set.exists():
+    #         return self.author.socialaccount_set.first().get_avatar_url()
+    #     else:
+    #         return f'https://doitdjango.com/avatar/id/568/d81db21f99570db9/svg/{self.author.email}'
+
 class Comment(models.Model):    # 댓글 기능을 위한 모델
     post = models.ForeignKey(Post, on_delete=models.CASCADE)    # 어떤 포스트에 담을 댓글인지를 저장하는 필드
     author = models.ForeignKey(User, on_delete=models.CASCADE)  # 작성자를 저장하는 필드
@@ -73,3 +79,9 @@ class Comment(models.Model):    # 댓글 기능을 위한 모델
 
     def get_absolute_url(self):
         return f'{self.post.get_absolute_url()}#comment-{self.pk}'
+
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else:
+            return f'https://doitdjango.com/avatar/id/568/d81db21f99570db9/svg/{self.author.email}'
