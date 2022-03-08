@@ -1,18 +1,193 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>새내기 웹개발자 김우중입니다.</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/bootstrap/bootstrap.min.css' %}" media="screen">
+    <link rel="stylesheet" type="text/css" href="{% static 'single_pages/css/about_me.css' %}" media="screen">
+
+    <script src="https://kit.fontawesome.com/25c7f52cb9.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <nav>
-        <a href="/blog/">Blog</a>
-        <a href="/about_me/">About me</a>
-    </nav>
 
-    <h1>안녕하세요, 김우중입니다.</h1>
-    <h2>이력</h2>
-    <h2>Portfolio</h2>
-    <h3>아직 공사중입니다.</h3>
+    {% include 'blog/navbar.html' %}
+
+    <section>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h1>안녕하세요. 김우중입니다.</h1>
+                    <br/>
+                    <p class="lead">
+                        컴퓨터와 영화, 자전거 라이딩을 좋아합니다.
+                        IT업계 최신 동향에 관심이 많으며, 코딩을 즐겨 합니다.
+                    </p>
+                    <ul>
+                        <li>WORK EAPERIENCE</li>
+                        <ul>
+                            <li>에듀통협동조합 - 컨텐츠 디자인, SNS 마케팅 (2020.09 ~ 2021.08)</li>
+                        </ul>
+                        <li>EDUCATION</li>
+                        <ul>
+                            <li>스마트기기 UI/UX 웹퍼블리싱 과정 - HTML5, CSS3, JavaScript/JQuery</li>
+                        </ul>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <img class="img-fluid" src="{% static 'single_pages/images/lantern_festival.png' %}" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light margin-for-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1>PORTFOLIO</h1>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-lg-4">
+                    <div class="card" data-toggle="modal" data-target="#bikefit-free">
+                        <img class="card-img-top" src="{% static 'single_pages/images/portfolio_01.png' %}" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Bikefit 프리디자인 웹사이트
+                            </h5>
+                            <p>
+                                마우스 휠로 작동 가능한 가로 슬라이드 형태의 Bikefit 웹사이트 메인 페이지입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card" data-toggle="modal" data-target="#bikefit-responsive">
+                        <img class="card-img-top" src="{% static 'single_pages/images/portfolio_02.png' %}" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Bikefit 반응형 웹사이트
+                            </h5>
+                            <p>
+                                반응형으로 제작된 Bikefit 웹사이트 메인 페이지입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card" data-toggle="modal" data-target="#bikefit-mobile">
+                        <img class="card-img-top" src="{% static 'single_pages/images/portfolio_03.png' %}" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Bikefit 모바일 전용 웹사이트
+                            </h5>
+                            <p>
+                                모바일 전용으로 제작된 Bikefit 웹사이트 메인 페이지입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="fixed-bottom">
+        {% include 'blog/footer.html' %}
+    </div>
+
+    <!--Modal-->
+    <div class="modal fade" id="bikefit-free" tabindex="-1" role="dialog" aria-labelledby="bikefit-freeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" rold="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id=" bikefit-freeModalLabel">Bikefit 프리디자인 웹사이트</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <img class="img-fluid" src="{% static 'single_pages/images/portfolio_01.png' %}">
+                        </div>
+                        <div class="col-lg-5">
+                            <p>마우스 휠로 작동 가능한 가로 슬라이드 형태의 Bikefit 웹사이트 메인 페이지입니다.</p>
+                            <a role="button" class="btn btn-light" href="https://github.com/kwj2020-hub/bikefit_free"><i class="fa-brands fa-github"></i></i> 깃허브</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="bikefit-responsive" tabindex="-1" role="dialog" aria-labelledby="bikefit-responsiveModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" rold="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id=" bikefit-responsiveModalLabel">Bikefit 반응형 웹사이트</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <img class="img-fluid" src="{% static 'single_pages/images/portfolio_02.png' %}">
+                        </div>
+                        <div class="col-lg-5">
+                            <p>@media screen 코드를 이용하여 반응형으로 제작된 Bikefit 웹사이트 메인 페이지입니다.</p>
+                            <a role="button" class="btn btn-light" href="https://github.com/kwj2020-hub/bikefit"><i class="fa-brands fa-github"></i></i> 깃허브</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="bikefit-mobile" tabindex="-1" role="dialog" aria-labelledby="bikefit-mobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" rold="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id=" bikefit-mobileModalLabel">Bikefit 모바일 전용 웹사이트</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <img class="img-fluid" src="{% static 'single_pages/images/portfolio_03.png' %}">
+                        </div>
+                        <div class="col-lg-5">
+                            <p>모바일 전용으로 제작된 Bikefit 웹사이트 메인 페이지입니다.</p>
+                            <a role="button" class="btn btn-light" href="https://github.com/kwj2020-hub/bikefit_mobile"><i class="fa-brands fa-github"></i></i> 깃허브</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/Modal-->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
 </body>
 </html>
