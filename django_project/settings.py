@@ -135,6 +135,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, '_static')
 
 MEDIA_URL = '/media/'   # 이미지 파일들의 URL 지정
 MEDIA_ROOT = os.path.join(BASE_DIR, '_media')   # os모듈로 이미지 파일이 위치할 디렉터리 이름 지정
